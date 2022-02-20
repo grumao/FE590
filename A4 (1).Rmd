@@ -1,0 +1,861 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, comment = "")
+```
+
+## Gloria John Rumao
+## `r format(Sys.time(), "%Y-%m-%d")`
+
+# Instructions
+
+```{r}
+set.seed(9183)
+```
+
+
+# Question 1:
+In this assignment, you will be required to find a set of data to run regression on.  This data set should be financial in nature, and of a type that will work with the models we have discussed this semester (hint: we didn't look at time series)  You may not use any of the data sets in the ISLR package that we have been looking at all semester.  Your data set that you choose should have both qualitative and quantitative variables. (or has variables that you can transform)
+
+Provide a description of the data below, where you obtained it, what the variable names are and what it is describing.
+
+## Desceiption of the dataset
+
+The data was downloaded from kaggle. It contains data collected from the Taiwan Economic Journal for the years 1999 to 2009. Company bankruptcy was defined based on the business regulations of the Taiwan Stock Exchange. The data set has 95 predictor variables to predict the single response variable Y i.e. Bankruptcy
+
+```{r}
+library(tidyverse)
+setwd("~/Downloads/datasets")
+project.data<- read.csv('data.csv')
+
+dim(project.data)
+#glimpse(project.data)
+```
+
+```{r}
+labs<-paste(c("X"),1:95,sep = "")
+colnames(project.data) <- c("Y",labs )
+```
+
+## Variables
+
+There are 95 preditor variables from X1 to X95, these are the business regulations of Taiwan stock exchange
+Varaible names and what the denote:  
+X1 - ROA(C) before interest and depreciation before interest: Return On Total Assets(C)  
+X2 - ROA(A) before interest and % after tax: Return On Total Assets(A)  
+X3 - ROA(B) before interest and depreciation after tax: Return On Total Assets(B)  
+X4 - Operating Gross Margin: Gross Profit/Net Sales  
+X5 - Realized Sales Gross Margin: Realized Gross Profit/Net Sales  
+X6 - Operating Profit Rate: Operating Income/Net Sales  
+X7 - Pre-tax net Interest Rate: Pre-Tax Income/Net Sales  
+X8 - After-tax net Interest Rate: Net Income/Net Sales  
+X9 - Non-industry income and expenditure/revenue: Net Non-operating Income Ratio  
+X10 - Continuous interest rate (after tax): Net Income-Exclude Disposal Gain or Loss/Net Sales  
+X11 - Operating Expense Rate: Operating Expenses/Net Sales  
+X12 - Research and development expense rate: (Research and Development Expenses)/Net Sales  
+X13 - Cash flow rate: Cash Flow from Operating/Current Liabilities  
+X14 - Interest-bearing debt interest rate: Interest-bearing Debt/Equity  
+X15 - Tax rate (A): Effective Tax Rate  
+X16 - Net Value Per Share (B): Book Value Per Share(B)  
+X17 - Net Value Per Share (A): Book Value Per Share(A)  
+X18 - Net Value Per Share (C): Book Value Per Share(C)  
+X19 - Persistent EPS in the Last Four Seasons: EPS-Net Income  
+X20 - Cash Flow Per Share  
+X21 - Revenue Per Share (Yuan ¥): Sales Per Share  
+X22 - Operating Profit Per Share (Yuan ¥): Operating Income Per Share  
+X23 - Per Share Net profit before tax (Yuan ¥): Pretax Income Per Share  
+X24 - Realized Sales Gross Profit Growth Rate  
+X25 - Operating Profit Growth Rate: Operating Income Growth  
+X26 - After-tax Net Profit Growth Rate: Net Income Growth  
+X27 - Regular Net Profit Growth Rate: Continuing Operating Income after Tax Growth  
+X28 - Continuous Net Profit Growth Rate: Net Income-Excluding Disposal Gain or Loss Growth  
+X29 - Total Asset Growth Rate: Total Asset Growth  
+X30 - Net Value Growth Rate: Total Equity Growth  
+X31 - Total Asset Return Growth Rate Ratio: Return on Total Asset Growth  
+X32 - Cash Reinvestment %: Cash Reinvestment Ratio  
+X33 - Current Ratio  
+X34 - Quick Ratio: Acid Test  
+X35 - Interest Expense Ratio: Interest Expenses/Total Revenue  
+X36 - Total debt/Total net worth: Total Liability/Equity Ratio  
+X37 - Debt ratio %: Liability/Total Assets  
+X38 - Net worth/Assets: Equity/Total Assets  
+X39 - Long-term fund suitability ratio (A): (Long-term Liability+Equity)/Fixed Assets  
+X40 - Borrowing dependency: Cost of Interest-bearing Debt  
+X41 - Contingent liabilities/Net worth: Contingent Liability/Equity  
+X42 - Operating profit/Paid-in capital: Operating Income/Capital  
+X43 - Net profit before tax/Paid-in capital: Pretax Income/Capital  
+X44 - Inventory and accounts receivable/Net value: (Inventory+Accounts Receivables)/Equity  
+X45 - Total Asset Turnover  
+X46 - Accounts Receivable Turnover  
+X47 - Average Collection Days: Days Receivable Outstanding  
+X48 - Inventory Turnover Rate (times)  
+X49 - Fixed Assets Turnover Frequency  
+X50 - Net Worth Turnover Rate (times): Equity Turnover  
+X51 - Revenue per person: Sales Per Employee  
+X52 - Operating profit per person: Operation Income Per Employee  
+X53 - Allocation rate per person: Fixed Assets Per Employee  
+X54 - Working Capital to Total Assets  
+X55 - Quick Assets/Total Assets  
+X56 - Current Assets/Total Assets  
+X57 - Cash/Total Assets  
+X58 - Quick Assets/Current Liability  
+X59 - Cash/Current Liability  
+X60 - Current Liability to Assets  
+X61 - Operating Funds to Liability  
+X62 - Inventory/Working Capital  
+X63 - Inventory/Current Liability  
+X64 - Current Liabilities/Liability  
+X65 - Working Capital/Equity  
+X66 - Current Liabilities/Equity  
+X67 - Long-term Liability to Current Assets  
+X68 - Retained Earnings to Total Assets  
+X69 - Total income/Total expense  
+X70 - Total expense/Assets  
+X71 - Current Asset Turnover Rate: Current Assets to Sales  
+X72 - Quick Asset Turnover Rate: Quick Assets to Sales  
+X73 - Working capitcal Turnover Rate: Working Capital to Sales  
+X74 - Cash Turnover Rate: Cash to Sales  
+X75 - Cash Flow to Sales  
+X76 - Fixed Assets to Assets  
+X77 - Current Liability to Liability  
+X78 - Current Liability to Equity  
+X79 - Equity to Long-term Liability  
+X80 - Cash Flow to Total Assets  
+X81 - Cash Flow to Liability  
+X82 - CFO to Assets  
+X83 - Cash Flow to Equity  
+X84 - Current Liability to Current Assets  
+X85 - Liability-Assets Flag: 1 if Total Liability exceeds Total Assets, 0 otherwise  
+X86 - Net Income to Total Assets  
+X87 - Total assets to GNP price  
+X88 - No-credit Interval  
+X89 - Gross Profit to Sales  
+X90 - Net Income to Stockholder's Equity  
+X91 - Liability to Equity  
+X92 - Degree of Financial Leverage (DFL)  
+X93 - Interest Coverage Ratio (Interest expense to EBIT)  
+X94 - Net Income Flag: 1 if Net Income is Negative for the last two years, 0 otherwise  
+X95 - Equity to Liability  
+
+```{r}
+#head(project.data)
+summary(project.data)
+```
+From the summary we observe that the data has no NA or NaN values.
+All the independent variables are quantitative except for X85 and X94 those are Liability-Assets (Flag: 1 if Total Liability exceeds Total Assets, 0 otherwise) and Net Income (Flag: 1 if Net Income is Negative for the last two years, 0 otherwise) respectively. Also the dependent variable is qualitative: Y (Flag: 1 if bankrupt account, 0 otherwise)  
+
+```{r}
+project.data$Y <- factor(project.data$Y)
+summary(project.data$Y)
+plot(project.data$Y, col="pink")
+```
+
+Thus, we can observe that only 220/6819 i.e.  3.23% of the data entries are the companies that are bankrupt, and rest 6599/6819 i.e. 96.77% of the data entries are the companies that are not bankrupt.
+
+## Divinding the data into training and testing sets
+
+Before getting started with the building the models, we will split the data into training and testing data sets.
+In this case I want to make sure that both training and testing data sets have approximately the same percentage of bankrupt data entries. That is my Y has the same mean in both data sets.
+
+```{r}
+
+mean(as.numeric(as.character(project.data$Y)))
+summary(project.data$Y)
+
+Y.1.rows <- which(project.data$Y==1)
+Y.1 <-project.data[Y.1.rows,]
+nrow(Y.1)
+
+Y.0.rows <- which(project.data$Y==0)
+Y.0 <-project.data[Y.0.rows,]
+nrow(Y.0)
+
+dt = sort(sample(nrow(Y.1), nrow(Y.1)*.75))
+train1<-Y.1[dt,]
+test1<-Y.1[-dt,]
+nrow(train1)
+nrow(test1)
+
+dt = sort(sample(nrow(Y.0), nrow(Y.0)*.75))
+train0<-Y.0[dt,]
+test0<-Y.0[-dt,]
+nrow(train0)
+nrow(test0)
+
+data.train <- rbind(train1,train0)
+# shuffle the rows
+rows <- sample(nrow(data.train))
+Training <- data.train[rows, ]
+identical(Training,data.train)
+nrow(Training)
+
+data.test <- rbind(test1,test0)
+# shuffle the rows
+rows <- sample(nrow(data.test))
+Testing <- data.test[rows, ]
+identical(Testing,data.test)
+nrow(Testing)
+
+print("Mean of Y in data set ")
+mean(as.numeric(as.character(project.data$Y)))
+print("Mean of Y in Training data set")
+mean(as.numeric(as.character(Training$Y)))
+print("Mean of Y in Testing data set")
+mean(as.numeric(as.character(Testing$Y)))
+```
+
+
+
+# Question 2:
+Pick a quantitative variable and fit at least four different models in order to predict that variable using the other predictors.  Determine which of the models is the best fit.  You will need to provide strong reasons as to why the particular model you chose is the best one.  You will need to confirm the model you have selected provides the best fit and that you have obtained the best version of that particular model (i.e. subset selection or validation for example).  You need to convince the grader that you have chosen the best model.
+
+Y is the dependent variable in the data set,but since Y is qualitative in nature it can't be used for this question, thus I will try to predict a different variable from the data set, that is quantitative in nature and plays a major role in determining bankruptcy. In question 3 I have used Y for dependent variable as it's qualitative in nature.
+
+Here we try to predict X86: Net Income to Total Assets
+
+## Subset Selection:
+Since, the best subset selection procedure considers all $2^p$ possible models, i.e. in this case $2^{95}=3.961408 * 10^{28}$ it makes the algorithm computational very slow. Thus, I am using forward stepwise selection as a computationally efficient alternative to best subset selection. 
+
+```{r}
+# Forward selection
+library(leaps)
+regfit.full=regsubsets(X86~.-Y,data=Training, nvmax=20, method = "forward")
+reg.summary=summary(regfit.full)
+reg.summary$outmat[,1:50]
+reg.summary$outmat[,51:94]
+```
+
+```{r}
+par(mfrow=c(1,3))
+cp = reg.summary$cp
+j=which.min(cp)
+plot(cp,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Mallows' Cp"))
+points(j,cp[j],pch=19,col="red") 
+
+r2 = reg.summary$adjr2
+j=which.max(r2)
+plot(r2,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Adjusted r-squared"))
+points(j,r2[j],pch=19,col="red") 
+
+bic=reg.summary$bic
+j=which.min(bic)
+plot(bic,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Bayes Information Criterion"))
+points(j,bic[j],pch=19,col="red")
+```
+
+```{r}
+#coef(regfit.full ,21)
+```
+The best 21 variables that are significant for the model as per forward selection are:  
+X2, X68, X70, X23, X79, X4, X69, X29, X55, X1, X11, X87, X3, X18, X38, X45, X90, X91, X44, X43, X15
+The Adjusted $R^2$, Mallow's cp, and BIC suggest a model with 21 predictors.  
+Thus, we create a subset data set with the above 21 variables to build our model  
+(for the sake of convenience so I don't need to type all the variables in the model.) 
+```{r}
+d.forward.21 <- Training[,c("X86", "X2", "X68", "X70", "X23",
+                            "X79", "X4", "X69", "X29", "X55",
+                            "X1", "X11", "X87", "X3", "X18", 
+                            "X38", "X45", "X90", "X91", "X44",
+                            "X43", "X15")]
+
+d.forward.21.test<-Testing[,c("X86", "X2", "X68", "X70", "X23",
+                            "X79", "X4", "X69", "X29", "X55",
+                            "X1", "X11", "X87", "X3", "X18", 
+                            "X38", "X45", "X90", "X91", "X44",
+                            "X43", "X15")]
+```
+
+## Validation Set Approach
+```{r}
+# Choosing Among Models Using the Validation Set Approach
+library(leaps)
+regfit.for=regsubsets(X86~.-Y,data=Training, nvmax=40, method = "forward")
+test.mat=model.matrix(X86~.-Y,data=Testing)
+val.errors=rep(NA,40)
+for(i in 1:40){
+  coefi=coef(regfit.for,id=i)
+  pred=test.mat[,names(coefi)]%*%coefi
+  val.errors[i]=mean((Testing$X86-pred)^2)
+}
+#val.errors
+which.min(val.errors)
+coef(regfit.for ,1)
+```
+Here we find only one significant predictor i.e X2
+
+## Model 1: Linear Regression model 
+```{r}
+# using features from forward subset 
+lm.fit=lm(X86~.,data=d.forward.21)
+summary(lm.fit)
+
+# test error
+project_pred <- predict(lm.fit, d.forward.21.test)
+mean((d.forward.21.test$X86-project_pred)^2)
+```
+From the adjusted R^2 the accuracy of the fit is 96%. And a very low test error of 0.004
+
+```{r}
+#using features from validation
+lm.fit=lm(X86~X2,data=Training)
+summary(lm.fit)
+
+# test error
+project_pred <- predict(lm.fit, Testing)
+mean((Testing$X86-project_pred)^2)
+
+attach(Training)
+plot(X2,X86)
+abline(lm.fit,lwd=3,col="red")
+detach(Training)
+```
+This model has a much lower test error than the first model and hence, is an improvement over it.
+
+## Model 2: Polynomial Regression
+```{r}
+plot(project.data$X2,project.data$X86)
+fit=lm(X86~poly(X2,4, raw = TRUE),data=Training)
+coef(summary(fit))
+```
+Thus, we can observe that X86 and X2 have a linear relationship and a linear model will be a better fit.
+
+## Model 3: Support Vector Machine
+```{r}
+library(e1071)
+out.re=svm(X86~.,data=d.forward.21,kernel="linear",cost=.001)
+re.pred=predict(out.re,d.forward.21.test)
+mean(abs(re.pred-d.forward.21.test$X86))
+```
+
+```{r}
+tune.out.re=tune(svm,X86~.,data=d.forward.21,kernel="linear",
+                 ranges=list(cost=c(0.1,1,5,10)))
+summary(tune.out.re)
+re.pred2=predict(tune.out.re$best.model,d.forward.21.test)
+mean(abs(re.pred2-d.forward.21.test$X86))
+```
+The above model has a lower test error, and hence is an improvement over the multiple linear regression model with 21 features.
+
+## Model 4: Booasting
+```{r}
+library(gbm)
+boost=gbm(X86~.,data=d.forward.21,
+                 distribution="gaussian",n.trees=5000, 
+                 interaction.depth=4)
+summary(boost)
+yhat.boost=predict(boost,newdata=d.forward.21.test, n.trees=5000)
+mean((yhat.boost -d.forward.21.test$X86)^2)
+```
+It is an improvement over the first model with a lower test error.
+
+## Model 5: Random Forest
+```{r}
+library(randomForest)
+bag=randomForest(X86~.,data=d.forward.21,mtry=13,importance =TRUE)
+bag
+yhat.bag = predict(bag ,newdata=d.forward.21.test)
+plot(yhat.bag, d.forward.21.test$X86)
+abline(0,1)
+mean((yhat.bag-d.forward.21.test$X86)^2)
+```
+This is the best model so far as it has the least test error of $1.33*10^{-5}$
+
+
+
+# Question 3:
+Do the same approach as in question 2, but this time for a qualitative variable.
+
+The qualitative variable is Y(Bankrupt:1 v/s financially stable:0) 
+## Subset Classification
+### Forward selection
+```{r, message=FALSE}
+# Forward selection
+library(leaps)
+regfit.full=regsubsets(Y~.,data=Training, nvmax=20, method = "forward")
+reg.summary=summary(regfit.full)
+reg.summary$outmat[,1:50]
+reg.summary$outmat[,51:95]
+```
+
+```{r}
+par(mfrow=c(1,3))
+cp = reg.summary$cp
+j=which.min(cp)
+plot(cp,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Mallows' Cp"))
+points(j,cp[j],pch=19,col="red") 
+
+r2 = reg.summary$adjr2
+j=which.max(r2)
+plot(r2,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Adjusted r-squared"))
+points(j,r2[j],pch=19,col="red") 
+
+bic=reg.summary$bic
+j=which.min(bic)
+plot(bic,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Bayes Information Criterion"))
+points(j,bic[j],pch=19,col="red")
+```
+
+
+The best 21 variables that are significant for the model as per forward selection are:  
+X86, X37, X65, X85, X68, X2, X76, X95, X50, X59, X15, X54, X49, X3, X1, X61, X19, X22, X41, X74, X51  
+The Adjusted $R^2$ and Mallow's cp suggest a model with 21 predictors whereas the BIC suggest a model with 18 predictors, so I plan to implement 2 model and compare their accuracy.  
+Thus, we create two subset datasets with the above variables 18 and 21 to build our model, (for the sake of convenience so I don't need to type all the variables again.)  
+```{r}
+data.forward.18<- Training[,c("Y","X86", "X37", "X65", "X85", "X68", "X2",
+                              "X76", "X95", "X50", "X59", "X15", "X54", 
+                              "X49", "X3", "X1", "X61", "X19", "X22" )]
+data.forward.18.test<- Testing[,c("Y","X86", "X37", "X65", "X85", "X68", 
+                                  "X2", "X76", "X95", "X50", "X59", "X15", 
+                                  "X54", "X49", "X3", "X1", "X61", "X19", "X22" )]
+
+data.forward.21<- Training[,c("Y","X86", "X37", "X65", "X85", "X68", "X2",
+                              "X76", "X95", "X50", "X59", "X15", "X54", 
+                              "X49", "X3", "X1", "X61", "X19", "X22",
+                              "X41", "X74", "X51")]
+data.forward.21.test<- Testing[,c("Y","X86", "X37", "X65", "X85", "X68", 
+                                  "X2", "X76", "X95", "X50", "X59", "X15",
+                                  "X54", "X49", "X3", "X1", "X61", "X19",
+                                  "X22",  "X41", "X74", "X51")]
+
+```
+
+### Backward selection
+```{r, message=FALSE}
+# Backward selection
+library(leaps)
+regfit.full=regsubsets(Y~.,data=Training, nvmax=20, method = "backward")
+reg.summary=summary(regfit.full)
+reg.summary$outmat[,1:50]
+reg.summary$outmat[,51:95]
+```
+
+```{r}
+par(mfrow=c(1,3))
+cp = reg.summary$cp
+j=which.min(cp)
+plot(cp,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Mallows' Cp"))
+points(j,cp[j],pch=19,col="red") 
+
+r2 = reg.summary$adjr2
+j=which.max(r2)
+plot(r2,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Adjusted r-squared"))
+points(j,r2[j],pch=19,col="red") 
+
+bic=reg.summary$bic
+j=which.min(bic)
+plot(bic,type='b',col="blue",
+     xlab="Number of Predictors",
+     ylab=expression("Bayes Information Criterion"))
+points(j,bic[j],pch=19,col="red")
+```
+
+The best 21 variables that are significant for the model as per backward selection are:  
+X86, X37, X85, X40, X68, X2, X44, X76, X43, X42, X3, X15, X1, X49, X51, X7, X6, X8, X59, X61, X83  
+The Adjusted $R^2$, Mallow's cp, and BIC suggest a model with 21 predictors.  
+Thus, we create a subset data set with the above 21 variables to build our model  
+```{r}
+data.backward.21<- Training[,c("Y", "X86", "X37", "X85", "X40", "X68", "X2",
+                               "X44", "X76", "X43", "X42", "X3", "X15", "X1",
+                               "X49", "X51", "X7", "X6", "X8", "X59", "X61",
+                               "X83")]
+
+data.backward.21.test<- Testing[,c("Y", "X86", "X37", "X85", "X40", "X68", 
+                                   "X2", "X44", "X76", "X43", "X42", "X3",
+                                   "X15", "X1", "X49", "X51", "X7", "X6", 
+                                   "X8", "X59", "X61", "X83")]
+
+```
+
+## Model 1: Logistic Regression model
+```{r}
+# Logistic Regression model
+# using forward subset selection with (18 variables)
+
+glm2 <- glm(Y~X86+X37+X65+X85+X68+X2+X76+X95+X50+X59+
+              X15+X54+X49+X3+X1+X61+X19+X22 , data = Training, family = binomial)
+summary(glm2)
+
+project_pred <- predict(glm2, Testing, type = "response")
+pred2 <- rep(0, length(project_pred))
+pred2[project_pred > 0.5] <- 1
+
+table(pred2, Testing$Y)
+
+mean(pred2==Testing$Y)
+```
+The model with 18 features has an accuracy of : 96.77%
+
+```{r}
+# Logistic Regression model
+# using forward subset selection with (21 variables)
+
+glm2 <- glm(Y~X86+X37+X65+X85+X68+X2+X76+X95+X50+X59+
+              X15+X54+X49+X3+X1+X61+X19+X22+X41+X74+X51 , data = Training, family = binomial)
+summary(glm2)
+
+project_pred <- predict(glm2, Testing, type = "response")
+pred2 <- rep(0, length(project_pred))
+pred2[project_pred > 0.5] <- 1
+
+table(pred2, Testing$Y)
+
+mean(pred2==Testing$Y)
+```
+The model with 21 features has an accuracy of : 96.83% 
+
+```{r}
+# Logistic Regression model
+# using backward subset selection (21 variables)
+
+glm2 <- glm(Y~X86+X37+X85+X40+X68+X2+X44+X76+X43+X42+X3+X15+
+              X1+X49+X51+X7+X6+X8+X59+X61+X83 , data = Training, family = binomial)
+summary(glm2)
+
+project_pred <- predict(glm2, Testing, type = "response")
+pred2 <- rep(0, length(project_pred))
+pred2[project_pred > 0.5] <- 1
+
+table(pred2, Testing$Y)
+
+mean(pred2==Testing$Y)
+```
+The model with 21 features has an accuracy of : 96.83% 
+Thus, we observe that both forward and backward selection models of 21 variables have the same accuracy.
+
+
+## Model 2: Linear Discriminant Analysis Model
+```{r}
+# LDA Model
+# forward selection with 18 variables
+library(MASS)
+lda.fit=lda(Y~.,data=data.forward.18)
+#lda.fit
+#plot(lda.fit)
+
+lda.pred=predict(lda.fit, data.forward.18.test)
+lda.class=lda.pred$class
+table(lda.class ,data.forward.18.test$Y)
+mean(lda.class==data.forward.18.test$Y)
+```
+The accuracy is 96.53%
+
+```{r}
+# LDA Model
+# forward selection with 21 variables
+library(MASS)
+lda.fit=lda(Y~.,data=data.forward.21)
+#lda.fit
+#plot(lda.fit)
+
+lda.pred=predict(lda.fit, data.forward.21.test)
+lda.class=lda.pred$class
+table(lda.class ,data.forward.21.test$Y)
+mean(lda.class==data.forward.21.test$Y)
+```
+The accuracy is 96.53%
+
+```{r}
+# LDA Model
+# Backward selection with 21 variables
+library(MASS)
+lda.fit=lda(Y~.,data=data.backward.21)
+#lda.fit
+#plot(lda.fit)
+
+lda.pred=predict(lda.fit, data.backward.21.test)
+lda.class=lda.pred$class
+table(lda.class ,data.backward.21.test$Y)
+mean(lda.class==data.backward.21.test$Y)
+```
+The accuracy is 96.36%
+The forward selection subsets show better accuracy than the backward selection subsets for model 2(LDA)
+
+Also, we can observe that Model 2(LDA) is not an improvement over Model 1(Logistic Regression).
+
+
+## Model 3: Quadratic Discriminant Analysis Model
+```{r}
+# QDA
+# forward subset with 21 features
+qda.fit=qda(Y~.,data=data.forward.21 )
+qda.fit
+qda.class=predict(qda.fit,data.forward.21.test)$class
+table(qda.class ,data.forward.21.test$Y)
+mean(qda.class==data.forward.21.test$Y)
+```
+The accuarcy is 96.54%
+
+```{r}
+# QDA
+# Backward subset with 21 features
+qda.fit=qda(Y~.,data=data.backward.21 )
+qda.fit
+qda.class=predict(qda.fit,data.backward.21.test)$class
+table(qda.class ,data.backward.21.test$Y)
+mean(qda.class==data.backward.21.test$Y)
+```
+The accuarcy is 96.54%
+Forward and backward selection subsets have the same accuracy.
+Thus, we can observe that Model 3(QDA) is not an improvement over Model 1(Logistic Regression).
+
+
+## Model 4: K-Nearest Neighbors
+```{r}
+# KNN
+# forward selection subset
+library(class)
+train.X=data.forward.21[,c(-1)]
+test.X=data.forward.21.test[,c(-1)]
+train.Y=data.forward.21$Y
+test.Y =data.forward.21.test$Y
+
+#K=1
+knn.pred=knn(train.X,test.X,train.Y ,k=1)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+#K=3
+knn.pred=knn(train.X,test.X,train.Y ,k=3)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+#K=5
+knn.pred=knn(train.X,test.X,train.Y ,k=5)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+```
+The accuracy for k=5 is 96.77%
+
+```{r}
+# KNN
+# backward selection subset
+library(class)
+train.X=data.backward.21[,c(-1)]
+test.X=data.backward.21.test[,c(-1)]
+train.Y=data.backward.21$Y
+test.Y =data.backward.21.test$Y
+
+#K=1
+knn.pred=knn(train.X,test.X,train.Y ,k=1)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+#K=3
+knn.pred=knn(train.X,test.X,train.Y ,k=3)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+#K=5
+knn.pred=knn(train.X,test.X,train.Y ,k=5)
+table(knn.pred,test.Y)
+mean(knn.pred==test.Y)
+```
+The accuracy for k=5 is 96.48%
+The forward subset has more accuracy then backward subset for KNN model.
+But, model 4(KNN) is not an improvement over the model 1(Logistic regression), as model 1 has better accuracy.
+
+## Model 5: Classification Tree
+```{r}
+library(tree)
+tree.model =tree(Y~. ,Training )
+summary(tree.model)
+tree.model
+plot(tree.model)
+text(tree.model ,pretty =0)
+```
+
+Variables actually used in tree construction are:  
+
+X19 - Persistent EPS in the Last Four Seasons: EPS-Net Income  
+X37 - Debt ratio %: Liability/Total Assets  
+X16 - Net Value Per Share (B): Book Value Per Share(B)  
+X92 - Degree of Financial Leverage (DFL)  
+X10 - Continuous interest rate (after tax): Net Income-Exclude Disposal Gain or Loss/Net Sales  
+X43 - Net profit before tax/Paid-in capital: Pretax Income/Capital  
+X14 - Interest-bearing debt interest rate: Interest-bearing Debt/Equity  
+X40 - Borrowing dependency: Cost of Interest-bearing Debt  
+X1 - ROA(C) before interest and depreciation before interest: Return On Total Assets(C)  
+X34 - Quick Ratio: Acid Test  
+X46 - Accounts Receivable Turnover  
+X3 - ROA(B) before interest and depreciation after tax: Return On Total Assets(B)  
+X66 - Current Liabilities/Equity  
+X11 - Operating Expense Rate: Operating Expenses/Net Sales  
+X53 - Allocation rate per person: Fixed Assets Per Employee  
+
+```{r}
+tree.pred=predict(tree.model,Testing,type="class")
+table(tree.pred ,Testing$Y)
+mean(tree.pred==Testing$Y)
+```
+The model accuracy is 96.89 which is an improvement over models 1,2,3 and 4
+```{r}
+cv.m1 =cv.tree(tree.model ,FUN=prune.misclass )
+names(cv.m1)
+cv.m1
+plot(cv.m1$size ,cv.m1$dev ,type="b")
+plot(cv.m1$k ,cv.m1$dev ,type="b")
+```
+
+```{r}
+prune.m1=prune.misclass(tree.model,best=6)
+plot(prune.m1)
+text(prune.m1,pretty=0)
+```
+
+```{r}
+tree.pred=predict(prune.m1,Testing,type="class")
+table(tree.pred ,Testing$Y)
+mean(tree.pred==Testing$Y)
+```
+The above model has the most accuracy of all the other models before, thus its the best model.
+
+
+# Question 4:
+In this problem, you will use support vector approaches in order to
+predict the direction of your ETFs in your data set from homework 2. 
+
+```{r}
+setwd("~/Downloads/datasets")
+Adj.CP2<-read.csv("Adjusted_Close_price_data.csv")
+data = Adj.CP2[,3:14]
+```
+
+## (a)
+Create two different data frames, one for each ETF.  Each data frame should include the log returns of your assets as well as a binary classifier for the direction of each ETF. 
+
+```{r}
+# Calculating log returns of assets(10 stocks)
+head(data[,-c(5,11)])
+assets.data<-data[,-c(5,11)]
+LogRet=assets.data
+dim(assets.data)
+for (i in 1:10)
+  {
+    LogRet[1:356,i]=log(assets.data[2:357,i]/assets.data[1:356,i])
+  }
+LogRet<-LogRet[-357,]
+dim(LogRet)
+
+# Calculating Log returns for the 2 ETFS
+IVV=log(data$IVV[2:357]/data$IVV[1:356])
+VOO=log(data$VOO[2:357]/data$VOO[1:356])
+
+# Creating a binary classifier for the direction of each ETF
+IVV.mean=mean(IVV)
+IVV.direction=IVV
+for (i in 1:length(IVV))
+{
+  if(IVV[i]>IVV.mean)
+  {
+   IVV.direction[i]=1
+  }else{
+   IVV.direction[i]=0
+  }
+}
+summary(IVV.direction)
+summary(factor(IVV.direction))
+
+VOO.mean=mean(VOO)
+VOO.direction=VOO
+for (i in 1:length(VOO))
+{
+  if(VOO[i]>VOO.mean)
+  {
+    VOO.direction[i]=1
+  }else{
+    VOO.direction[i]=0
+  }
+}
+summary(VOO.direction)
+summary(factor(VOO.direction))
+
+# Creating two different data frames, one for each ETF
+IVV.frame <- data.frame(IVV.direction,LogRet)
+VOO.frame <- data.frame(VOO.direction,LogRet)
+IVV.frame$IVV.direction<-factor(IVV.frame$IVV.direction)
+VOO.frame$VOO.direction<-factor(VOO.frame$VOO.direction)
+
+head(IVV.frame)
+head(VOO.frame)
+```
+
+## (b)
+Fit a support vector classifier to the data using linear kernels.  You should use the tune function to determine an optimal cost for each SVM.  What do you see in these results?  Is one ETF more accurately predicted over the other?
+
+```{r}
+library(e1071)
+train=sample(356,200,replace=FALSE)
+out=svm(IVV.direction~.,data=IVV.frame,subset=train,kernel="linear",cost=10)
+summary(out)
+table(out$fitted,IVV.frame$IVV.direction[train])
+pred.te=predict(out,newdata=IVV.frame[-train,])
+table(pred.te,IVV.frame$IVV.direction[-train])
+mean(pred.te==IVV.frame$IVV.direction[-train])
+tune.out=tune(svm,IVV.direction~.,data=IVV.frame[train,],kernel="linear",
+              ranges=list(cost=c(0.001,.01,.1,1,5,10,100)))
+summary(tune.out)
+dirpred2=predict(tune.out$best.model,IVV.frame[-train,])
+table(predict=dirpred2,truth=IVV.frame[-train,]$IVV.direction)
+mean(dirpred2==IVV.frame$IVV.direction[-train])
+```
+We can observe that after using the optimal cost from the tune function there is a slight increase in accuracy.
+
+```{r}
+train=sample(356,200,replace=FALSE)
+out=svm(VOO.direction~.,data=VOO.frame,subset=train,kernel="linear",cost=10)
+summary(out)
+table(out$fitted,VOO.frame$VOO.direction[train])
+pred.te=predict(out,newdata=VOO.frame[-train,])
+table(pred.te,VOO.frame$VOO.direction[-train])
+mean(pred.te==VOO.frame$VOO.direction[-train])
+tune.out=tune(svm,VOO.direction~.,data=VOO.frame[train,],kernel="linear",
+              ranges=list(cost=c(0.001,.01,.1,1,5,10,100)))
+summary(tune.out)
+dirpred2=predict(tune.out$best.model,VOO.frame[-train,])
+table(predict=dirpred2,truth=VOO.frame[-train,]$VOO.direction)
+mean(dirpred2==VOO.frame$VOO.direction[-train])
+```
+There is no difference observed in the accuracy after using the optimal function. 
+We can see that the ETF "VOO" is more accurately predicted than "IVV".
+
+## (c)
+Now repeat (b), this time using SVMs with radial and polynomial basis kernels, with different values of gamma and degree and cost. Comment on your results.
+
+```{r}
+train=sample(356,200,replace=FALSE)
+svmfit=svm(IVV.direction~.,data=IVV.frame,subset=train,kernel="radial", gamma=1 ,cost=1)
+summary(svmfit)
+
+tune.out<- tune(svm,IVV.direction~.,data=IVV.frame[train,],
+                kernel="radial",ranges=list(cost=c(0.1,1,10,100,1000),
+                                            gamma=c(0.5,1,2,3,4),
+                                            degree=c(1,2,3)))
+summary(tune.out)
+```
+we observe the best fit has cost=1, gamma=0.5 and degree=1
+```{r}
+train=sample(356,200,replace=FALSE)
+svmfit=svm(VOO.direction~.,data=VOO.frame,subset=train,kernel="polynomial", gamma=1 ,cost=1)
+summary(svmfit)
+
+tune.out<- tune(svm,VOO.direction~.,data=VOO.frame[train,],
+                kernel="radial",ranges=list(cost=c(0.1,1,10,100,1000),
+                                            gamma=c(0.5,1,2,3,4),
+                                            degree=c(1,2,3)))
+summary(tune.out)
+```
+we observe the best fit has cost=1, gamma=0.5 and degree=1
